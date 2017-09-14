@@ -102,7 +102,7 @@ namespace glTFLoader
                     MediaType = mediaType,
                     CharSet = textCharsetString,
                     Data = decoder.GetBytes(dataToken),
-                    DecodedString = dataToken,
+                    DecodedString = decoder.GetString(decoded),
                 };
                 return true;
             }
