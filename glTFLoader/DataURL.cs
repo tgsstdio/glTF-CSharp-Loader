@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Net;
 using System.Text;
 
 namespace glTFLoader
@@ -8,6 +10,7 @@ namespace glTFLoader
         public string MediaType { get; set; }
         public string CharSet { get; set; }
         public byte[] Data { get; set; }
+        public string DecodedString { get; set; }
 
         public static bool FromUri(string uri, out DataURL output)
         {
@@ -21,7 +24,7 @@ namespace glTFLoader
             // parameter:= attribute "=" value
 
             const string DATA_PREFIX = "data:";
-            if (!uri.StartsWith(DATA_PREFIX))
+            if (uri == null || !uri.StartsWith(DATA_PREFIX))
             {
                 output = null;
                 return false;
@@ -74,14 +77,33 @@ namespace glTFLoader
                 };
                 return true;
             }
-            else
+            else if (mediaType == PLAIN_TEXT)
             {
-                var encoder = Encoding.GetEncoding(textCharsetString);
+                var data = Encoding.ASCII.GetBytes(dataToken);
+                var decoded = WebUtility.UrlDecodeToBytes(data, 0, data.Length);
+
+                var decoder = Encoding.GetEncoding(textCharsetString);
                 output = new DataURL
                 {
                     MediaType = mediaType,
                     CharSet = textCharsetString,
-                    Data = encoder.GetBytes(dataToken),
+                    Data = null,
+                    DecodedString = decoder.GetString(decoded),
+                };
+                return true;
+            }
+            else
+            {
+                var data = Encoding.ASCII.GetBytes(dataToken);
+                var decoded = WebUtility.UrlDecodeToBytes(data, 0, data.Length);
+                var decoder = Encoding.GetEncoding(textCharsetString);
+
+                output = new DataURL
+                {
+                    MediaType = mediaType,
+                    CharSet = textCharsetString,
+                    Data = decoder.GetBytes(dataToken),
+                    DecodedString = dataToken,
                 };
                 return true;
             }
