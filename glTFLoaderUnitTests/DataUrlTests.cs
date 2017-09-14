@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using glTFLoader;
+﻿using glTFLoader;
 using NUnit.Framework;
 
 
@@ -10,7 +8,7 @@ namespace glTFLoaderUnitTests
     public class DataUrlTests
     {
         [Test]
-        public void ParseEmptyString()
+        public void ParseDataURL_EmptyString()
         {
             var result = DataURL.FromUri("", out DataURL actual);
             Assert.IsFalse(result);
@@ -18,7 +16,7 @@ namespace glTFLoaderUnitTests
         }
 
         [Test]
-        public void ParseNullString()
+        public void ParseDataURL_NullString()
         {
             var result = DataURL.FromUri(null, out DataURL actual);
             Assert.IsFalse(result);
@@ -26,7 +24,7 @@ namespace glTFLoaderUnitTests
         }
 
         [Test]
-        public void ParseABriefNote()
+        public void ParseDataURL_ABriefNote()
         {
             // FROM https://tools.ietf.org/html/rfc2397
             var result = DataURL.FromUri("data:,A%20brief%20note", out DataURL actual);
@@ -39,7 +37,7 @@ namespace glTFLoaderUnitTests
         }
 
         [Test]
-        public void ParseGreekLetters_0()
+        public void ParseDataURL_GreekLetters_0()
         {
             // NOT SURE IF 0x value of fg is valid, so changed to f6
             var result = DataURL.FromUri("data:text/plain;charset=iso-8859-7,%be%f6%be", out DataURL actual);
@@ -50,10 +48,9 @@ namespace glTFLoaderUnitTests
             Assert.IsNull(actual.Data);
             Assert.AreEqual("ΎφΎ", actual.DecodedString);
         }
-
-
+        
         [Test]
-        public void ParseGreekLetters_2()
+        public void ParseDataURL_GreekLetters_1()
         {
             // FROM https://tools.ietf.org/html/rfc2397
             var result = DataURL.FromUri("data:text/plain;charset=iso-8859-7,%be%fg%be", out DataURL actual);
@@ -66,7 +63,7 @@ namespace glTFLoaderUnitTests
         }
 
         [Test]
-        public void ParseUserSpecificAppLaunch()
+        public void ParseDataURL_UserSpecificAppLaunch()
         {
             // FROM https://tools.ietf.org/html/rfc2397
             var result = DataURL.FromUri("data:application/vnd-xxx-query, select_vcount, fcol_from_fieldtable / local", out DataURL actual);
@@ -79,7 +76,7 @@ namespace glTFLoaderUnitTests
         }
 
         [Test]
-        public void Base64Sample()
+        public void ParseDataURL_Base64Sample()
         {
             // FROM https://tools.ietf.org/html/rfc2397
             var result = DataURL.FromUri(
